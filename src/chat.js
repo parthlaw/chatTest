@@ -1,6 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+// import axios from "axios";
 import "./chat.css";
-const Chat = () => {
+const Chat = ({ ws }) => {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    ws.onmessage = function (e) {
+      const json = JSON.parse(e.data);
+      console.log(json);
+
+      if (json.action === "send-message") {
+        setMessages([...messages, json.message]);
+      }
+      // console.log(messages);
+    };
+    // return () => {
+    //   cleanup;
+    // };
+  }, [ws]);
+
   return (
     <div className="chat">
       <section className="msger">
@@ -16,6 +34,28 @@ const Chat = () => {
         </header>
 
         <main className="msger-chat">
+          {messages.map((message, index) => {
+            return (
+              <div className="msg left-msg" key={index}>
+                <div
+                  className="msg-img"
+                  style={{
+                    backgroundImage:
+                      "url(https://image.flaticon.com/icons/svg/327/327779.svg)",
+                  }}
+                ></div>
+
+                <div className="msg-bubble">
+                  <div className="msg-info">
+                    <div className="msg-info-name">User 1</div>
+                    <div className="msg-info-time">12:45</div>
+                  </div>
+
+                  <div className="msg-text">{message.data}</div>
+                </div>
+              </div>
+            );
+          })}
           <div className="msg left-msg">
             <div
               className="msg-img"
@@ -27,7 +67,7 @@ const Chat = () => {
 
             <div className="msg-bubble">
               <div className="msg-info">
-                <div className="msg-info-name">BOT</div>
+                <div className="msg-info-name">User 1</div>
                 <div className="msg-info-time">12:45</div>
               </div>
 
@@ -48,7 +88,7 @@ const Chat = () => {
 
             <div className="msg-bubble">
               <div className="msg-info">
-                <div className="msg-info-name">Sajad</div>
+                <div className="msg-info-name">User 2</div>
                 <div className="msg-info-time">12:46</div>
               </div>
 

@@ -1,8 +1,24 @@
 import React from "react";
+import axios from "axios";
 
-const Welcome = () => {
+const Welcome = (props) => {
   const handleClick = () => {
     console.log("Clicked");
+    // http://localhost:3000/api/care/chat/sessions
+
+    axios
+      .post("http://localhost:8000/api/care/chat/sessions", {
+        startDate: Date.now(),
+        studentId: "kuwcukvscwewifwecdhwf",
+        // teacherId: "ikwefigcirwcfweibgcwe",
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    props.setWindow(1);
   };
   return (
     <div>
