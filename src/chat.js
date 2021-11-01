@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 // import axios from "axios";
 import "./chat.css";
-const Chat = ({ ws }) => {
+const Chat = ({ ws, roomName }) => {
   const [messages, setMessages] = useState([]);
+  const [text, setText] = useState("");
+  const [token, setToken] = useState("");
 
+  useEffect(() => {
+    ws.send(JSON.stringify({ type: "join-room", message: roomName }));
+  }, []);
   useEffect(() => {
     ws.onmessage = function (e) {
       const json = JSON.parse(e.data);
@@ -12,13 +17,25 @@ const Chat = ({ ws }) => {
       if (json.action === "send-message") {
         setMessages([...messages, json.message]);
       }
+      if (json.action === "join-room") {
+        setToken(json.token);
+      }
+      if (json.action === "assign-teacher") {
+        console.log(json);
+      }
       // console.log(messages);
     };
     // return () => {
     //   cleanup;
     // };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ws]);
 
+  const sendMsg = () => {
+    ws.send(
+      JSON.stringify({ action: "send-message", message: text, token: token })
+    );
+  };
   return (
     <div className="chat">
       <section className="msger">
@@ -56,7 +73,7 @@ const Chat = ({ ws }) => {
               </div>
             );
           })}
-          <div className="msg left-msg">
+          {/* <div className="msg left-msg">
             <div
               className="msg-img"
               style={{
@@ -96,19 +113,20 @@ const Chat = ({ ws }) => {
                 You can change your name in JS section!
               </div>
             </div>
-          </div>
+          </div> */}
         </main>
 
-        <form className="msger-inputarea">
+        <div className="msger-inputarea">
           <input
             type="text"
             className="msger-input"
             placeholder="Enter your message..."
+            onChange={(e) => setText(e.target.value)}
           />
-          <button type="submit" className="msger-send-btn">
+          <button className="msger-send-btn" onClick={sendMsg}>
             Send
           </button>
-        </form>
+        </div>
       </section>
     </div>
   );

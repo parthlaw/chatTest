@@ -13,7 +13,8 @@ const Welcome = (props) => {
         // teacherId: "ikwefigcirwcfweibgcwe",
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
+        props.setRoomName(res.data.session._id);
       })
       .catch((err) => {
         console.log(err);
